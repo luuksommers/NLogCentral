@@ -1,0 +1,49 @@
+@{
+    Layout = "Master.cshtml";
+} 
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<NLogCentral.Web.Modules.WebModule.IndexViewModel>
+<div class="row">
+    <div class="col-lg-12">
+        <h2>Latest errors</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Machine</th>
+                        <th>ProcessName</th>
+                        <th>Level</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model.Logs)
+                    {
+                        string rowStyle = null;
+                        switch (log.Level.ToUpper())
+                        {
+                            case "ERROR":
+                            case "FATAL":
+                                rowStyle = "danger";
+                                break;
+                            case "WARN":
+                                rowStyle = "warning";
+                                break;
+
+                            default:
+                                rowStyle = "active"; // "success" = green record
+                                break;
+                        }
+                        
+                        <tr class="@rowStyle">
+                            <td>@log.MachineName</td>
+                            <td>@log.ProcessName</td>
+                            <td>@log.Level</td>
+                            <td>@log.Message</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
