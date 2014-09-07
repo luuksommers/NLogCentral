@@ -1,7 +1,58 @@
 @{
     Layout = "Master.cshtml";
-} 
+}
 @inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<NLogCentral.Web.Modules.WebModule.IndexViewModel>
+
+@section Footer {
+    <!-- Morris Charts JavaScript -->
+    <script src="js/plugins/morris/raphael.min.js"></script>
+    <script src="js/plugins/morris/morris.min.js"></script>
+    @*<script src="js/plugins/morris/morris-data.js"></script>*@
+
+    <!-- Flot Charts JavaScript -->
+    <!--[if lte IE 8]><script src="js/excanvas.min.js"></script><![endif]-->
+    @*<script src="js/plugins/flot/jquery.flot.js"></script>
+    <script src="js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="js/plugins/flot/jquery.flot.resize.js"></script>
+    <script src="js/plugins/flot/jquery.flot.pie.js"></script>
+    <script src="js/plugins/flot/flot-data.js"></script>*@
+    
+    <script type="text/javascript">
+        $(function () {
+
+            $.get('@Url.Content("~/GraphData")', function (result) {
+                // Area Chart
+                Morris.Area({
+                    element: 'morris-area-chart',
+                    data: result,
+                    xkey: 'hour',
+                    ykeys: ['info', 'warn', 'error', 'fatal'],
+                    labels: ['Info', 'Warn', 'Error', 'Fatal'],
+                    lineColors: ['#d0e9c6', '#faf2cc', '#ebcccc', '#ebcccc'],
+                    pointSize: 2,
+                    hideHover: 'auto',
+                    resize: true
+                });
+            });
+        });
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-green">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Area Line Graph Example with Tooltips</h3>
+            </div>
+            <div class="panel-body">
+                <div id="morris-area-chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
 <div class="row">
     <div class="col-lg-12">
         <h2>Latest errors</h2>
@@ -33,7 +84,7 @@
                                 rowStyle = "active"; // "success" = green record
                                 break;
                         }
-                        
+
                         <tr class="@rowStyle">
                             <td>@log.MachineName</td>
                             <td>@log.ProcessName</td>

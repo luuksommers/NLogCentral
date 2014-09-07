@@ -9,5 +9,6 @@
         public string MachineName { get; set; }
         public string ProcessName { get; set; }
         public string StackTrace { get; set; }
+        public string Date { get; set; }
     }
 }
