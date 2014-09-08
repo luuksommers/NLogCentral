@@ -1,4 +1,6 @@
-﻿namespace NLogCentral.Web.Models
+﻿using System;
+
+namespace NLogCentral.Web.Models
 {
     public class LogModel
     {
@@ -9,6 +11,6 @@
         public string MachineName { get; set; }
         public string ProcessName { get; set; }
         public string StackTrace { get; set; }
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }

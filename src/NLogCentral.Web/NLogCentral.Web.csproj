@@ -146,7 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomBootstrapper.cs" />
+    <Compile Include="Indexes\LogModelCountByLevelPerHour.cs" />
     <Compile Include="Models\LogModel.cs" />
+    <Compile Include="Models\Statistic.cs" />
     <Compile Include="Modules\LogModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -25,10 +25,10 @@
                 Morris.Area({
                     element: 'morris-area-chart',
                     data: result,
-                    xkey: 'hour',
-                    ykeys: ['info', 'warn', 'error', 'fatal'],
-                    labels: ['Info', 'Warn', 'Error', 'Fatal'],
-                    lineColors: ['#d0e9c6', '#faf2cc', '#ebcccc', '#ebcccc'],
+                    xkey: 'dateTime',
+                    ykeys: ['warn', 'error', 'fatal'],
+                    labels: ['Warn', 'Error', 'Fatal'],
+                    lineColors: ['#d0e9c6', '#faf2cc', '#ebcccc'],
                     pointSize: 2,
                     hideHover: 'auto',
                     resize: true
@@ -72,16 +72,17 @@
                         string rowStyle = null;
                         switch (log.Level.ToUpper())
                         {
-                            case "ERROR":
                             case "FATAL":
-                                rowStyle = "danger";
+                                rowStyle = "danger"; // Red
+                                break;
+                            case "ERROR":
+                                rowStyle = "warning"; // Yellow
                                 break;
                             case "WARN":
-                                rowStyle = "warning";
+                                rowStyle = "info"; // Blue
                                 break;
-
                             default:
-                                rowStyle = "active"; // "success" = green record
+                                rowStyle = "active"; // White - also available: "success" = green record
                                 break;
                         }
 

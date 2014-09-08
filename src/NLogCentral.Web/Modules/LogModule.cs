@@ -9,25 +9,28 @@ namespace NLogCentral.Web.Modules
 {
     public class LogModule : NancyModule
     {
-        public LogModule() : base("log")
+        private readonly IDocumentStore _store;
+
+        public LogModule(IDocumentStore store) : base("log")
         {
-            Post["/"] = parameters =>
+            _store = store;
+            Post["/"] = AddNewLog;
+        }
+
+        private dynamic AddNewLog(dynamic parameters)
+        {
+            var log = this.Bind<LogModel>();
+            // Saving changes using the session API
+            using (IDocumentSession session = _store.OpenSession())
             {
-                var log = this.Bind<LogModel>();
-                var documentStore = new DocumentStore { Url = "http://192.168.110.128:8080/" };
-                documentStore.Initialize();
-                // Saving changes using the session API
-                using (IDocumentSession session = documentStore.OpenSession())
-                {
-                    // Operations against session
-                    session.Store(log);
+                // Operations against session
+                session.Store(log);
 
-                    // Flush those changes
-                    session.SaveChanges();
-                }
+                // Flush those changes
+                session.SaveChanges();
+            }
 
-                return HttpStatusCode.OK;
-            };
+            return HttpStatusCode.OK;
         }
     }
 }

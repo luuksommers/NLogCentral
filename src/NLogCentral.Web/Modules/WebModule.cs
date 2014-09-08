@@ -2,14 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nancy;
+using NLogCentral.Web.Indexes;
 using NLogCentral.Web.Models;
 using Raven.Client;
 using Raven.Client.Document;
+using Raven.Client.Extensions;
 
 namespace NLogCentral.Web.Modules
 {
     public class WebModule : NancyModule
     {
+        private readonly IDocumentStore _store;
+
         public class ViewModelBase
         {
             public string Title { get; set; }
@@ -21,22 +25,23 @@ namespace NLogCentral.Web.Modules
             public List<string> ProcessNames { get; set; }
         }
 
-        public WebModule()
+        public WebModule(IDocumentStore store)
         {
+            _store = store;
             Get["/"] = Index;
             Get["/GraphData"] = GraphData;
         }
 
         private dynamic Index(dynamic parameters)
         {
-            var documentStore = new DocumentStore { Url = "http://192.168.110.128:8080/" };
-            documentStore.Initialize();
+
             // Saving changes using the session API
-            using (IDocumentSession session = documentStore.OpenSession())
+            using (IDocumentSession session = _store.OpenSession())
             {
                 // Operations against session
                 var vm = new IndexViewModel();
-                vm.Logs = session.Query<LogModel>().Take(10).ToList();
+
+                vm.Logs = session.Query<LogModel>().OrderByDescending(a => a.Date).Take(10).ToList();
                 vm.ProcessNames = session.Query<LogModel>().Select(a => a.ProcessName).Distinct().ToList();
                 vm.Title = "Dashboard";
 
@@ -44,38 +49,51 @@ namespace NLogCentral.Web.Modules
             }
         }
 
-
-        public class Statistic
-        {
-            public int Hour { get; set; }
-            public int Info { get; set; }
-            public int Warn { get; set; }
-            public int Error { get; set; }
-            public int Fatal { get; set; }
-        }
-
         private dynamic GraphData(dynamic parameters)
         {
-            // most probably the values will come from a database
-            // this is just a sample to show you 
-            // that you can return an IEnumerable object
-            // and it will be serialized properly
-            var stats = new List<Statistic>();
-            var rand = new Random();
-            for (int i = 0; i < 24; i++)
-            {
-                stats.Add(new Statistic()
-                {
-                    Hour = DateTime.UtcNow.Hour + i,
-                    Info = rand.Next(30,100),
-                    Warn = rand.Next(0, 30),
-                    Error = rand.Next(0, 10),
-                    Fatal = rand.Next(0, 5)
-                });
-            }
+            var retval = new List<Statistic>();
 
-            return stats;
+            // Saving changes using the session API
+            using (IDocumentSession session = _store.OpenSession())
+            {
+                // Operations against session
+                var statistics = session.Query<LogModelCountByLevelPerHour.ReduceResult, LogModelCountByLevelPerHour>().ToList()
+                    .GroupBy(x => x.Hour)
+                    .Select(x => new Statistic()
+                    {
+                        DateTime = AsUtc(DateTime.MinValue.AddTicks(TimeSpan.TicksPerHour * x.Key)),
+                        Error = x.Where(y => y.Level == "Error").Sum(y => y.Count),
+                        Warn = x.Where(y => y.Level == "Warn").Sum(y => y.Count),
+                        Fatal = x.Where(y => y.Level == "Fatal").Sum(y => y.Count),
+                    })
+                    .ToList();
+
+
+                var dateLoop = Truncate(DateTime.UtcNow.AddHours(-2), TimeSpan.FromHours(1));
+                while (dateLoop < DateTime.UtcNow.AddHours(5))
+                {
+                    var value = statistics.FirstOrDefault(a => a.DateTime == dateLoop);
+                    if(value == null)
+                        retval.Add(new Statistic(){DateTime = dateLoop});
+                    else
+                        retval.Add(value);
+
+                    dateLoop = dateLoop.AddHours(1);
+                }
+
+                return retval;
+            }
         }
 
+        public static DateTime Truncate(DateTime dateTime, TimeSpan timeSpan)
+        {
+            if (timeSpan == TimeSpan.Zero) return dateTime; // Or could throw an ArgumentException
+            return dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
+        }
+
+        public static DateTime AsUtc(DateTime dateTime)
+        {
+            return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+        }
     }
 }
