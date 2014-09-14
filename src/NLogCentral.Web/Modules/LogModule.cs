@@ -23,6 +23,9 @@ namespace NLogCentral.Web.Modules
             // Saving changes using the session API
             using (IDocumentSession session = _store.OpenSession())
             {
+                // Clean up processname
+                log.ProcessName = log.ProcessName.Replace(".vshost", "");
+
                 // Operations against session
                 session.Store(log);
 

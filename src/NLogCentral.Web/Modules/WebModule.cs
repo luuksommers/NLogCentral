@@ -14,22 +14,15 @@ namespace NLogCentral.Web.Modules
     {
         private readonly IDocumentStore _store;
 
-        public class ViewModelBase
-        {
-            public string Title { get; set; }
-        }
-
-        public class IndexViewModel : ViewModelBase
-        {
-            public List<LogModel> Logs { get; set; }
-            public List<string> ProcessNames { get; set; }
-        }
 
         public WebModule(IDocumentStore store)
         {
             _store = store;
             Get["/"] = Index;
             Get["/GraphData"] = GraphData;
+            Get["/Applications"] = Applications;
+            Get["/Applications/{application}"] = Application;
+
         }
 
         private dynamic Index(dynamic parameters)
@@ -69,8 +62,8 @@ namespace NLogCentral.Web.Modules
                     .ToList();
 
 
-                var dateLoop = Truncate(DateTime.UtcNow.AddHours(-2), TimeSpan.FromHours(1));
-                while (dateLoop < DateTime.UtcNow.AddHours(5))
+                var dateLoop = Truncate(DateTime.UtcNow.AddHours(-24), TimeSpan.FromHours(1));
+                while (dateLoop < DateTime.UtcNow.AddHours(1))
                 {
                     var value = statistics.FirstOrDefault(a => a.DateTime == dateLoop);
                     if(value == null)
@@ -82,6 +75,36 @@ namespace NLogCentral.Web.Modules
                 }
 
                 return retval;
+            }
+        }
+
+        private dynamic Applications(dynamic parameters)
+        {
+            // Saving changes using the session API
+            using (IDocumentSession session = _store.OpenSession())
+            {
+                // Operations against session
+                var vm = new ApplicationsViewModel();
+
+                vm.Applications = session.Query<LogModel>().Select(x=>x.ProcessName).Distinct().ToList();
+                vm.Title = "Applications";
+                return View["applications.cshtml", vm];
+            }
+        }
+
+        private dynamic Application(dynamic parameters)
+        {
+            // Saving changes using the session API
+            using (IDocumentSession session = _store.OpenSession())
+            {
+                var processName = (string)parameters.application;
+                // Operations against session
+                var vm = new IndexViewModel();
+
+                vm.Logs = session.Query<LogModel>().Where(a => a.ProcessName == processName).OrderByDescending(a => a.Date).Take(100).ToList();
+                vm.Title = processName;
+
+                return View["application.cshtml", vm];
             }
         }
 

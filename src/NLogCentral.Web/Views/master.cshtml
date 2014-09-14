@@ -1,4 +1,4 @@
-﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<NLogCentral.Web.Modules.WebModule.ViewModelBase>
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<NLogCentral.Web.Models.ViewModelBase>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,13 +14,13 @@
     <title>SB Admin - Bootstrap Admin Template</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="@Url.Content("~/css/bootstrap.min.css")" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="@Url.Content("~/css/sb-admin.css")" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="@Url.Content("~/font-awesome-4.1.0/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -154,10 +154,10 @@
                     <li>
                         <a href="@Url.Content("~/")"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
+                    <li>
+                        <a href="@Url.Content("~/applications")"><i class="fa fa-fw fa-cog"></i> Applications</a>
+                    </li>
                     @*<li>
-                            <a href="charts.html"><i class="fa fa-fw fa-bar-chart-o"></i> Charts</a>
-                        </li>
-                        <li>
                             <a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a>
                         </li>
                         <li>
@@ -196,7 +196,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            @Model.Title 
+                            @Model.Title
                             @* <small>Subheading</small> *@
                         </h1>
                         @*<ol class="breadcrumb">
@@ -219,12 +219,12 @@
     </div>
     <!-- /#wrapper -->
     <!-- jQuery Version 1.11.0 -->
-    <script src="js/jquery-1.11.0.js"></script>
+    <script src="@Url.Content("~/js/jquery-1.11.0.js")"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-    
-    @RenderSection("Footer")
+    <script src="@Url.Content("~/js/bootstrap.min.js")"></script>
+
+    @RenderSection("Footer", false)
 
 </body>
 

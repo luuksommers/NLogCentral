@@ -111,6 +111,8 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Views\applications.cshtml" />
+    <Content Include="Views\application.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -149,7 +151,10 @@
     <Compile Include="Indexes\LogModelCountByLevelPerHour.cs" />
     <Compile Include="Models\LogModel.cs" />
     <Compile Include="Models\Statistic.cs" />
+    <Compile Include="Models\ApplicationsViewModel.cs" />
+    <Compile Include="Models\IndexViewModel.cs" />
     <Compile Include="Modules\LogModule.cs" />
+    <Compile Include="Models\ViewModelBase.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,0 +1,37 @@
+@{
+    Layout = "Master.cshtml";
+}
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<NLogCentral.Web.Models.ApplicationsViewModel>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-exclamation-circle fa-fw"></i> Applications</h3>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>Application</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var application in Model.Applications)
+                            {
+                                <tr class="active">
+                                    <td><a href="@Url.Content("~/Applications/" + application)">@application</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @*<div class="text-right">
+                    <a href="#">View Next Page <i class="fa fa-arrow-circle-right"></i></a>
+                </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
