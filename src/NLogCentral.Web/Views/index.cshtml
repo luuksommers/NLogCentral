@@ -68,6 +68,7 @@
                                 <th>Application</th>
                                 <th>Level</th>
                                 <th>Message</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -95,6 +96,7 @@
                                     <td>@log.ProcessName</td>
                                     <td>@log.Level</td>
                                     <td>@log.Message</td>
+                                    <td><a href="@Url.Content("~/error/" + log.Id.Replace("/", "-"))">details</a></td>
                                 </tr>
                             }
                         </tbody>

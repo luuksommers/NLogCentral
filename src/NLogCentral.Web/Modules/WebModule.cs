@@ -22,7 +22,7 @@ namespace NLogCentral.Web.Modules
             Get["/GraphData"] = GraphData;
             Get["/Applications"] = Applications;
             Get["/Applications/{application}"] = Application;
-
+            Get["/Error/{id}"] = ErrorDetails;
         }
 
         private dynamic Index(dynamic parameters)
@@ -105,6 +105,22 @@ namespace NLogCentral.Web.Modules
                 vm.Title = processName;
 
                 return View["application.cshtml", vm];
+            }
+        }
+
+        private dynamic ErrorDetails(dynamic parameters)
+        {
+            // Saving changes using the session API
+            using (IDocumentSession session = _store.OpenSession())
+            {
+                var errorId = ((string)parameters.id).Replace("-", "/");
+                // Operations against session
+                var vm = new ErrorDetailsViewModel();
+
+                vm.Error = session.Load<LogModel>(errorId);
+                vm.Title = "Error " + errorId;
+
+                return View["errordetails.cshtml", vm];
             }
         }
 
